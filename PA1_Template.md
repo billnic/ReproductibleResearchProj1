@@ -82,11 +82,12 @@ g <- ggplot(databyDate, aes(x = steps))
 g <- g + geom_histogram(fill="yellow",color="darkgreen") + 
         geom_vline(aes(xintercept=mean(databyDate$steps,na.rm = TRUE),color="Mean"),show_guide = T) +
         geom_vline(aes(xintercept=median(databyDate$steps,na.rm = TRUE),color="Median"),show_guide = T) + 
-        scale_colour_manual(name='Calcs', values=c('Mean'='blue', 'Median'='red'))
+        scale_colour_manual(name='Calcs', values=c('Mean'='blue', 'Median'='red')) +
+        ggtitle("Total number of steps per day (NA's omitted)")
 g
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+![plot of chunk hist_1_total_steps_omitNAs](figure/hist_1_total_steps_omitNAs-1.png) 
 
 - Calculate and report the mean and median of the total number of steps taken per day 
 
@@ -115,11 +116,12 @@ cat("median steps per day:",medianDay)
 databyInterval<- omitdata %>% group_by(interval) %>% summarize(steps = mean(steps, na.rm = TRUE))
 g <- ggplot(databyInterval, aes(x = interval,y=steps)) +
         geom_line() + scale_x_continuous(breaks=seq(0,2400, by=100),label=c(0:24)) +
-        xlab("hours gathered in 5 minute intervals") + ylab("average number of steps")
+        xlab("hours gathered in 5 minute intervals") + ylab("average number of steps") +
+        ggtitle("Time series of avg steps (NA's omitted)")
 g
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
+![plot of chunk time_series1_avgsteps_omitNAs](figure/time_series1_avgsteps_omitNAs-1.png) 
 
 - Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?  
 
@@ -170,11 +172,12 @@ impdatabysteps<- imputedData %>% group_by(date) %>% summarize(steps = sum(steps,
 g <- ggplot(impdatabysteps, aes(x = steps))
 g <- g + geom_histogram(fill="yellow",color="darkgreen") + 
         geom_vline(aes(xintercept=mean(impdatabysteps$steps,na.rm = TRUE),color="Mean", linetype="Mean"), size=1, show_guide=TRUE) +
-        geom_vline(aes(xintercept=median(impdatabysteps$steps,na.rm = TRUE),color="Median", linetype="Median"), size=1, show_guide=TRUE) 
+        geom_vline(aes(xintercept=median(impdatabysteps$steps,na.rm = TRUE),color="Median", linetype="Median"), size=1, show_guide=TRUE) +
+        ggtitle("Histogram of total number of steps (NA's imputed)")
 g
 ```
 
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
+![plot of chunk hist2_imputed_steps](figure/hist2_imputed_steps-1.png) 
 
  - Calculate and report the mean and median total number of steps taken per day.   
 
@@ -222,7 +225,7 @@ g<-g+geom_line() + scale_x_continuous(breaks=seq(0,2400,by=100),label=c(0:24)) +
 g
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
+![plot of chunk timeseries2_weekpart](figure/timeseries2_weekpart-1.png) 
    
    * *In the morning intervals, there is a slight reduction of steps on weekends*
    * *In the afternoun and evening intervals, there is a slight increase on weekends*

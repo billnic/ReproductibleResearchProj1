@@ -65,13 +65,14 @@ library(dplyr)
 databyDate<- omitdata %>% group_by(date) %>% summarize(steps = sum(steps, na.rm = TRUE))
 ```  
 - Make a histogram of the total number of steps taken each day
-```{r,echo=TRUE,message=FALSE,warning=FALSE}
+```{r hist_1_total_steps_omitNAs,echo=TRUE,message=FALSE,warning=FALSE}
 library(ggplot2)
 g <- ggplot(databyDate, aes(x = steps))
 g <- g + geom_histogram(fill="yellow",color="darkgreen") + 
         geom_vline(aes(xintercept=mean(databyDate$steps,na.rm = TRUE),color="Mean"),show_guide = T) +
         geom_vline(aes(xintercept=median(databyDate$steps,na.rm = TRUE),color="Median"),show_guide = T) + 
-        scale_colour_manual(name='Calcs', values=c('Mean'='blue', 'Median'='red'))
+        scale_colour_manual(name='Calcs', values=c('Mean'='blue', 'Median'='red')) +
+        ggtitle("Total number of steps per day (NA's omitted)")
 g
 ```
 
@@ -85,11 +86,12 @@ cat("median steps per day:",medianDay)
 ## What is the average daily activity pattern? ## 
 
 - Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r, echo=T}
+```{r time_series1_avgsteps_omitNAs, echo=T}
 databyInterval<- omitdata %>% group_by(interval) %>% summarize(steps = mean(steps, na.rm = TRUE))
 g <- ggplot(databyInterval, aes(x = interval,y=steps)) +
         geom_line() + scale_x_continuous(breaks=seq(0,2400, by=100),label=c(0:24)) +
-        xlab("hours gathered in 5 minute intervals") + ylab("average number of steps")
+        xlab("hours gathered in 5 minute intervals") + ylab("average number of steps") +
+        ggtitle("Time series of avg steps (NA's omitted)")
 g
 ```
 
@@ -122,12 +124,13 @@ cat("Total number of missing values after imputing NAs: ",sum(is.na(imputedData)
 
 - Make a histogram of the total number of steps taken each day  
   
-```{r, echo=T,warning=F,message=F}
+```{r hist2_imputed_steps, echo=T,warning=F,message=F}
 impdatabysteps<- imputedData %>% group_by(date) %>% summarize(steps = sum(steps, na.rm = TRUE))
 g <- ggplot(impdatabysteps, aes(x = steps))
 g <- g + geom_histogram(fill="yellow",color="darkgreen") + 
         geom_vline(aes(xintercept=mean(impdatabysteps$steps,na.rm = TRUE),color="Mean", linetype="Mean"), size=1, show_guide=TRUE) +
-        geom_vline(aes(xintercept=median(impdatabysteps$steps,na.rm = TRUE),color="Median", linetype="Median"), size=1, show_guide=TRUE) 
+        geom_vline(aes(xintercept=median(impdatabysteps$steps,na.rm = TRUE),color="Median", linetype="Median"), size=1, show_guide=TRUE) +
+        ggtitle("Histogram of total number of steps (NA's imputed)")
 g
 ```
 
@@ -152,7 +155,7 @@ imputedData$wkpart <- as.factor(ifelse(weekdays(imputedData$date,abbreviate=T) %
 table(imputedData$wkpart)
 ```
 - Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r,echo=T}
+```{r timeseries2_weekpart,echo=T,warning=F}
 wkpartNintvData<- imputedData %>% group_by(wkpart,interval) %>% summarize(steps = mean(steps, na.rm = TRUE))
 g <- ggplot(wkpartNintvData, aes(x = interval,y=steps,color=wkpart)) 
 g<-g+geom_line() + scale_x_continuous(breaks=seq(0,2400,by=100),label=c(0:24)) +
