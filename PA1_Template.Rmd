@@ -46,11 +46,6 @@ padata<-read.csv("activity.csv",stringsAsFactors = F)
 padata$date<-as.Date(padata$date)
 head(padata,3)
 ```
-library(dplyr)
-library(ggplot2)
-library(lubridate)
-library(scales)
-
 ## What is mean total number of steps taken per day? ##    
 
 - For this part of the assignment, you can ignore the missing values in the dataset.
@@ -83,7 +78,7 @@ cat("mean steps per day:",meanDay)
 medianDay<-round(median(databyDate$steps,na.rm = TRUE),3)
 cat("median steps per day:",medianDay)
 ```
-## What is the average daily activity pattern? ## 
+## What is the average daily activity pattern?## 
 
 - Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 ```{r time_series1_avgsteps_omitNAs, echo=T}
@@ -100,14 +95,14 @@ g
 maxintv<-databyInterval[databyInterval$steps==max(databyInterval$steps),]
 cat("The maximun steps is observed in the five minute interval starting on",as.character(maxintv[1,1]/100),"am averaging", round(as.numeric(maxintv[1,2]),digits=2),"steps")
 ```
-## Imputing missing values
+## Imputing missing values##
 
 - Calculate and report the total number of missing values in the dataset. 
 ```{r, echo=T,warning=FALSE}
 cat("Total number of missing values: ",sum(is.na(padata)))
 ```
 - Devise a strategy for filling in all of the missing values in the dataset.    
-       *my strategy is to replace missing values with the interval average*
+       *My strategy is to replace missing values with the interval average, that is, substitute the NA value for the average value corresponding to its interval. The average for each interval was calculated above.*
 
 - Create a new dataset that is equal to the original dataset but with the missing data filled in.  
 
@@ -149,7 +144,7 @@ impDiffdel
 - What is the impact of imputing missing data on the estimates of the total daily number of steps?  
         *The means are virtually the same but there is a slight shift in the median*    
 
-## Are there differences in activity patterns between weekdays and weekends?
+## Are there differences in activity patterns between weekdays and weekends?##
 ```{r, echo=T}
 imputedData$wkpart <- as.factor(ifelse(weekdays(imputedData$date,abbreviate=T) %in% c("Sat","Sun"),"weekend", "weekday"))
 table(imputedData$wkpart)

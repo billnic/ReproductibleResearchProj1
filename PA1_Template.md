@@ -54,11 +54,6 @@ head(padata,3)
 ## 2    NA 2012-10-01        5
 ## 3    NA 2012-10-01       10
 ```
-library(dplyr)
-library(ggplot2)
-library(lubridate)
-library(scales)
-
 ## What is mean total number of steps taken per day? ##    
 
 - For this part of the assignment, you can ignore the missing values in the dataset.
@@ -108,7 +103,7 @@ cat("median steps per day:",medianDay)
 ```
 ## median steps per day: 10765
 ```
-## What is the average daily activity pattern? ## 
+## What is the average daily activity pattern?## 
 
 - Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
@@ -133,7 +128,7 @@ cat("The maximun steps is observed in the five minute interval starting on",as.c
 ```
 ## The maximun steps is observed in the five minute interval starting on 8.35 am averaging 206.17 steps
 ```
-## Imputing missing values
+## Imputing missing values##
 
 - Calculate and report the total number of missing values in the dataset. 
 
@@ -145,7 +140,7 @@ cat("Total number of missing values: ",sum(is.na(padata)))
 ## Total number of missing values:  2304
 ```
 - Devise a strategy for filling in all of the missing values in the dataset.    
-       *my strategy is to replace missing values with the interval average*
+       *My strategy is to replace missing values with the interval average, that is, substitute the NA value for the average value corresponding to its interval. The average for each interval was calculated above.*
 
 - Create a new dataset that is equal to the original dataset but with the missing data filled in.  
 
@@ -201,7 +196,7 @@ impDiffdel
 - What is the impact of imputing missing data on the estimates of the total daily number of steps?  
         *The means are virtually the same but there is a slight shift in the median*    
 
-## Are there differences in activity patterns between weekdays and weekends?
+## Are there differences in activity patterns between weekdays and weekends?##
 
 ```r
 imputedData$wkpart <- as.factor(ifelse(weekdays(imputedData$date,abbreviate=T) %in% c("Sat","Sun"),"weekend", "weekday"))
