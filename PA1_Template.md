@@ -29,7 +29,8 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 
 
 ## Loading and preprocessing the data ## 
-```{r eval=TRUE, echo=TRUE, warning=FALSE}
+
+```r
 #          download, unzip and read data. 
 setInternet2(use = TRUE) #                      this is necessary in Windows
 url<-"https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
@@ -46,6 +47,13 @@ padata<-read.csv("activity.csv",stringsAsFactors = F)
 padata$date<-as.Date(padata$date)
 head(padata,3)
 ```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+```
 library(dplyr)
 library(ggplot2)
 library(lubridate)
@@ -55,17 +63,20 @@ library(scales)
 
 - For this part of the assignment, you can ignore the missing values in the dataset.
 
-```{r,echo=TRUE}
+
+```r
 omitdata<-na.omit(padata)
 ```
 
 - Calculate the total number of steps taken per day
-```{r,echo=TRUE,message=FALSE}
+
+```r
 library(dplyr)
 databyDate<- omitdata %>% group_by(date) %>% summarize(steps = sum(steps, na.rm = TRUE))
-```  
+```
 - Make a histogram of the total number of steps taken each day
-```{r,echo=TRUE,message=FALSE,warning=FALSE}
+
+```r
 library(ggplot2)
 g <- ggplot(databyDate, aes(x = steps))
 g <- g + geom_histogram(fill="yellow",color="darkgreen") + 
@@ -75,17 +86,32 @@ g <- g + geom_histogram(fill="yellow",color="darkgreen") +
 g
 ```
 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+
 - Calculate and report the mean and median of the total number of steps taken per day 
-```{r, echo=T}
+
+```r
 meanDay<-round(mean(databyDate$steps,na.rm = TRUE),3)
 cat("mean steps per day:",meanDay)
+```
+
+```
+## mean steps per day: 10766.19
+```
+
+```r
 medianDay<-round(median(databyDate$steps,na.rm = TRUE),3)
 cat("median steps per day:",medianDay)
+```
+
+```
+## median steps per day: 10765
 ```
 ## What is the average daily activity pattern? ## 
 
 - Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r, echo=T}
+
+```r
 databyInterval<- omitdata %>% group_by(interval) %>% summarize(steps = mean(steps, na.rm = TRUE))
 g <- ggplot(databyInterval, aes(x = interval,y=steps)) +
         geom_line() + scale_x_continuous(breaks=seq(0,2400, by=100),label=c(0:24)) +
@@ -93,23 +119,36 @@ g <- ggplot(databyInterval, aes(x = interval,y=steps)) +
 g
 ```
 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
+
 - Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?  
-```{r, echo=TRUE,message=FALSE,warning=FALSE}
+
+```r
 maxintv<-databyInterval[databyInterval$steps==max(databyInterval$steps),]
 cat("The maximun steps is observed in the five minute interval starting on",as.character(maxintv[1,1]/100),"am averaging", round(as.numeric(maxintv[1,2]),digits=2),"steps")
+```
+
+```
+## The maximun steps is observed in the five minute interval starting on 8.35 am averaging 206.17 steps
 ```
 ## Imputing missing values
 
 - Calculate and report the total number of missing values in the dataset. 
-```{r, echo=T,warning=FALSE}
+
+```r
 cat("Total number of missing values: ",sum(is.na(padata)))
+```
+
+```
+## Total number of missing values:  2304
 ```
 - Devise a strategy for filling in all of the missing values in the dataset.    
        *my strategy is to replace missing values with the interval average*
 
 - Create a new dataset that is equal to the original dataset but with the missing data filled in.  
 
-```{r, echo=T}
+
+```r
 imputedData <- padata 
 for (i in 1:nrow(imputedData)) {
         if (is.na(imputedData$steps[i])) {
@@ -117,12 +156,16 @@ for (i in 1:nrow(imputedData)) {
         }
 }
 cat("Total number of missing values after imputing NAs: ",sum(is.na(imputedData))) 
+```
 
+```
+## Total number of missing values after imputing NAs:  0
 ```
 
 - Make a histogram of the total number of steps taken each day  
   
-```{r, echo=T,warning=F,message=F}
+
+```r
 impdatabysteps<- imputedData %>% group_by(date) %>% summarize(steps = sum(steps, na.rm = TRUE))
 g <- ggplot(impdatabysteps, aes(x = steps))
 g <- g + geom_histogram(fill="yellow",color="darkgreen") + 
@@ -131,15 +174,24 @@ g <- g + geom_histogram(fill="yellow",color="darkgreen") +
 g
 ```
 
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
+
  - Calculate and report the mean and median total number of steps taken per day.   
-```{r, echo=T,warning=F} 
+
+```r
 impdatabysteps<- imputedData %>% group_by(date) %>% summarize(steps = sum(steps, na.rm = TRUE))
 imeanDay<-mean(impdatabysteps$steps,na.rm = TRUE)  
 imedianDay<-median(impdatabysteps$steps,na.rm = TRUE)  
 impDiffdel<-data.frame(rbind(mean=c(imeanDay,meanDay,imeanDay-meanDay),median=c(imedianDay,medianDay,imedianDay-medianDay)))
 names(impDiffdel)<-c("imputed NAs","deleted NAs","difference")
 impDiffdel
-```  
+```
+
+```
+##        imputed NAs deleted NAs    difference
+## mean      10766.19    10766.19 -0.0003207547
+## median    10766.19    10765.00  1.1886792453
+```
    
 - Do these values differ from the estimates from the first part of the assignment?      
         *No, the values are very similar as seen above in their means and medians*  
@@ -147,12 +199,20 @@ impDiffdel
         *The means are virtually the same but there is a slight shift in the median*    
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r, echo=T}
+
+```r
 imputedData$wkpart <- as.factor(ifelse(weekdays(imputedData$date,abbreviate=T) %in% c("Sat","Sun"),"weekend", "weekday"))
 table(imputedData$wkpart)
 ```
+
+```
+## 
+## weekday weekend 
+##   12960    4608
+```
 - Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r,echo=T}
+
+```r
 wkpartNintvData<- imputedData %>% group_by(wkpart,interval) %>% summarize(steps = mean(steps, na.rm = TRUE))
 g <- ggplot(wkpartNintvData, aes(x = interval,y=steps,color=wkpart)) 
 g<-g+geom_line() + scale_x_continuous(breaks=seq(0,2400,by=100),label=c(0:24)) +
@@ -161,6 +221,8 @@ g<-g+geom_line() + scale_x_continuous(breaks=seq(0,2400,by=100),label=c(0:24)) +
         ggtitle("Time Series Plot: Weekdays vs. Weekends")
 g
 ```
+
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
    
    * *In the morning intervals, there is a slight reduction of steps on weekends*
    * *In the afternoun and evening intervals, there is a slight increase on weekends*
